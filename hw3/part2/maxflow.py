@@ -84,7 +84,9 @@ def maxflow(bfs_max_iterations=float('inf'), flow_max_iterations=float('inf')):
                     SELECT p.path || array[e.id] AS path, p.nodes || array[e.dst] AS nodes
                     INTO tmp
                     FROM paths p INNER JOIN edge e
-                        ON p.nodes[array_length(p.nodes, 1)] = e.src AND NOT p.nodes @> array[e.dst]
+                        ON p.nodes[array_length(p.nodes, 1)] = e.src 
+                        AND NOT p.nodes @> array[e.dst]
+                        AND e.capacity != 0
                     ;
 
                     DROP TABLE IF EXISTS paths CASCADE;
@@ -132,18 +134,13 @@ def maxflow(bfs_max_iterations=float('inf'), flow_max_iterations=float('inf')):
         # Then, update the `edges` table
         db.execute("""
             WITH updates(id, new_capacity) AS (
-                WITH residual_edge(id, capacity) AS (
-                    SELECT id, capacity
-                    FROM edge
-                    WHERE NOT EXISTS (SELECT id, capacity FROM original_edge)
-                )
                 SELECT e.id, e.capacity - f.flow 
-                FROM original_edge e INNER JOIN flow_to_route f
-                    ON e.id = f.edge_id
+                FROM edge e, flow_to_route f
+                WHERE e.id = f.edge_id AND e.id IN (SELECT id FROM original_edge)
                 UNION
                 SELECT e.id, e.capacity + f.flow
-                FROM residual_edge e INNER JOIN flow_to_route f
-                    ON e.id = f.edge_id
+                FROM edge e, flow_to_route f
+                WHERE e.id IN (SELECT reverse_id FROM flip_edge WHERE forward_id = f.edge_id)
             )
             UPDATE edge
               SET capacity = updates.new_capacity
