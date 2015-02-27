@@ -111,10 +111,9 @@ CREATE VIEW q7 (cand_name1, cand_name2) AS
   (SELECT DISTINCT cand_id, cmte_id
    FROM committee_contributions
    WHERE state = 'RI')
-  SELECT DISTINCT c1.name, c2.name
-  FROM candidates c1
-    INNER JOIN RIContributions cc1 ON cc1.cand_id = c1.id
-    INNER JOIN RIContributions cc2 ON cc1.cmte_id = cc2.cmte_id
-    INNER JOIN candidates c2 ON cc2.cand_id = c2.id
-  WHERE cc1.cmte_id = cc2.cmte_id AND c1.id != c2.id
+  SELECT c1.name, c2.name
+  FROM candidates c1, candidates c2, RIContributions cc1, RIContributions cc2
+  WHERE cc1.cand_id = c1.id AND cc1.cmte_id = cc2.cmte_id AND cc2.cand_id = c2.id
+  GROUP BY c1.id, c2.id
+  HAVING c1.id != c2.id
 ;
