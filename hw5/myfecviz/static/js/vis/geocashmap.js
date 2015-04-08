@@ -147,7 +147,9 @@ USCashMap.prototype.render = function (data) {
         // defined function.
 
         // Implement
-        console.log("Component received a mouseover event!");  // Remove when implemented
+        that.addStateToSelection(d['state']);
+        this.style.fill = '#4CAF50';
+        that.setInspectionInfo(that.stateNameMap.get(d['state']), d['total_amount']);
     });
 
     /*
@@ -168,7 +170,9 @@ USCashMap.prototype.render = function (data) {
         // defined function.
 
         // Implement
-        console.log("Component received a mouseout event!");  // Remove when implemented
+        that.clearInspectionInfo();
+        that.removeStateFromSelection(d['state']);
+        this.style.fill = moneyColorScale(d['total_amount']);
     });
 
     /*
@@ -192,7 +196,9 @@ USCashMap.prototype.render = function (data) {
         // defined function.
 
         // Implement
-        console.log("Component received a click!");  // Remove when implemented
+        that.addStateToSelection(d['state']);
+        this.style.fill = '#E4C92F';
+        that.setInspectionInfo(that.stateNameMap.get(d['state']), d['total_amount']);
     });
 };
 

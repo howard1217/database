@@ -111,5 +111,7 @@ DashboardController.prototype.processChanges = function () {
  */
 DashboardController.prototype.filterTransactionsByMapSelection = function () {
     // Implement
-    return [];
+    var map = this.usCashMap
+    function isInSelection(d) { return map.hasStateInSelection(d['state']); }
+    return this.allTransactions.filter(isInSelection);
 };
