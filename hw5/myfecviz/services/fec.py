@@ -52,7 +52,7 @@ def get_total_transaction_amounts_by_state():
     :returns: List of dictionaries with 'state' and 'total_amount' keys
     """
     # Execute database query
-    db.execute("SELECT state, SUM(transaction_amt) FROM committee_contributions GROUP BY state")
+    db.execute("SELECT state, SUM(transaction_amt) FROM committee_contributions WHERE transaction_amt > 0 GROUP BY state;")
     results = db.fetchall()
     listOfDicts = []
     for i in range(len(results)):

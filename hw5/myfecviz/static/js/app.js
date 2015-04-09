@@ -76,18 +76,20 @@ DashboardController.prototype.firstProcess = function (error, response0, respons
  */
 DashboardController.prototype.processChanges = function () {
     // Implement
-    console.log("Controller notified of map change.");  // Remove when implemented
-
     var renderData;  // filter renderData as needed.
     if (this.usCashMap.isSelectionClick() && this.usCashMap.hasSelection()) {
         // Selection was clicked
         // Make sure transaction histogram is rescaled to just the selection
-
+        renderData = this.filterTransactionsByMapSelection();
+        this.transactionHistogram.setScale(renderData);
+        this.transactionHistogram.setHistogramColor(this.transactionHistogram.colorStates.SECONDARY);
         // Implement ! 
     } else if (this.usCashMap.hasSelection()) {
         // Selection is just hovered upon
         // Use scale representing all of data (for a visually relative measure) 
-
+        renderData = this.filterTransactionsByMapSelection();
+        this.transactionHistogram.setScale(this.allTransactions);
+        this.transactionHistogram.setHistogramColor(this.transactionHistogram.colorStates.PRIMARY);
         // Implement ! 
     } else {
         // No user interaction
@@ -98,7 +100,7 @@ DashboardController.prototype.processChanges = function () {
     }
 
     // Uncomment the following line when you're ready!
-    // this.transactionHistogram.render(renderData);
+    this.transactionHistogram.render(renderData);
 };
 
 /*
