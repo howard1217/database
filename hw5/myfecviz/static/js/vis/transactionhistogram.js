@@ -71,11 +71,17 @@ TransactionHistogram.prototype.render = function(data) {
     /* Enter phase */
     // Implement
     // Add a new grouping
-
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("tranform", "translate(0," + height + ")");
     // Add a rectangle to this bar grouping
-
+    bar.append("rect")
+      .attr("width", this.width/(this.bins.length + 1))
+      .attr("height", this.height);
     // Add text to this bar grouping
-
+    bar.append("text")
+      .attr("dy", ".75em")
+      .text(function(d) { return formatCount(d.y); });
 
     /** Update phase */
     // Implement
@@ -153,7 +159,9 @@ TransactionHistogram.prototype.setScale = function (data) {
       .range(d3.range(0, this.width, this.width/(this.bins.length + 1)));
 
     // Implement: define a suitable yScale given the data
-    this.yScale;
+    this.yScale = d3.scale.sqrt()
+      .domain(0, d3.max(data, function (d) { return d['amount']; }))
+      .range(0, this.height);
 
     return histogramData;
 };
